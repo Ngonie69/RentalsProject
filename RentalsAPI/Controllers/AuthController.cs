@@ -115,7 +115,7 @@ namespace RentalsAPI.Controllers
                 claims: claims,
                 expires: DateTime.Now.AddDays(1),
                 signingCredentials: cred
-
+              
                 );
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
 
