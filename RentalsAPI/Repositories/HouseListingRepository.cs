@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver;
+using RentalsAPI.DTO;
 using RentalsAPI.Models;
 
 namespace RentalsAPI.Repositories
@@ -13,8 +14,8 @@ namespace RentalsAPI.Repositories
         private readonly IMongoCollection<HouseListing> houseListingCollection;
 
         private readonly FilterDefinitionBuilder<HouseListing> filterBuilder = Builders<HouseListing>.Filter;
-        
-        public HouseListingRepository(IMongoClient mongoClient )
+
+        public HouseListingRepository(IMongoClient mongoClient)
         {
             IMongoDatabase mongoDatabase = mongoClient.GetDatabase(database);
             houseListingCollection = mongoDatabase.GetCollection<HouseListing>(collectionName);
@@ -37,12 +38,13 @@ namespace RentalsAPI.Repositories
             return houseListingCollection.Find(new BsonDocument()).ToListAsync();
         }
 
-        Task<HouseListing> IHouseListingRepository.GetHouseListing(HouseListing houseListing)
+        Task<HouseListing> IHouseListingRepository.GetHouseListing(Guid id)
         {
-            throw new NotImplementedException();
-        }
+            var filter = filterBuilder.Eq(item => item.Id, id);
+            return houseListingCollection.Find(filter).FirstOrDefaultAsync();
+        }      
 
-       async Task IHouseListingRepository.UpdateHouseListing(HouseListing houseListing)
+        async Task IHouseListingRepository.UpdateHouseListing(HouseListing houseListing)
         {
             var filter = filterBuilder.Eq(item => item.Id, houseListing.Id);
             await houseListingCollection.ReplaceOneAsync(filter, houseListing);

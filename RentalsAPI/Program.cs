@@ -19,6 +19,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
 builder.Services.AddSingleton<ILoginRepository, LoginRepository>();
+builder.Services.AddSingleton<IHouseListingRepository, HouseListingRepository>();
+builder.Services.AddSingleton<IBookingRepository, BookingRepository>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

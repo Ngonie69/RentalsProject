@@ -1,4 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RentalsAPI.DTO;
+using RentalsAPI.Models;
+using RentalsAPI.Repositories;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,36 +11,52 @@ namespace RentalsAPI.Controllers
     [ApiController]
     public class HouseListingsController : ControllerBase
     {
+        private IHouseListingRepository _houseListingRepository;
+
+        public HouseListingsController(IHouseListingRepository houseListing)
+        {
+            _houseListingRepository = houseListing;
+        }
+
         // GET: api/<HouseListingsController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<ActionResult<HouseListing>> Get()
         {
-            return new string[] { "value1", "value2" };
+            var house = await _houseListingRepository.GetAllHouseListings();
+            return Ok(house);
         }
 
         // GET api/<HouseListingsController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<ActionResult<BookingModel>> GetHouseListing(Guid id)
         {
-            return "value";
+            var booking = await _houseListingRepository.GetHouseListing(id);
+            return Ok(booking);
         }
 
         // POST api/<HouseListingsController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult<HouseListingDTO>> Post([FromBody] HouseListing houseListing)
         {
+            if (houseListing == null)
+            {
+                return BadRequest();
+            }
+
+            await _houseListingRepository.AddHouseListing(houseListing);
+            return Ok(houseListing);
         }
 
         // PUT api/<HouseListingsController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
+
 
         // DELETE api/<HouseListingsController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<ActionResult<HouseListingDTO>> Delete(Guid id)
         {
+            await _houseListingRepository.DeleteHouseListing(id);
+            return Ok();
         }
     }
 }
